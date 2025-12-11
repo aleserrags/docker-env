@@ -8,11 +8,12 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ../Projetos:/workspace
+      - ./php/8.2/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     working_dir: /workspace
     tty: true
     stdin_open: true
     ports:
-      - "8200-8299:8000-8099"
+      - "8000-8099:8000-8099"
     environment:
       - TZ=America/Porto_Velho
 
@@ -24,11 +25,12 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ../Projetos:/workspace
+      - ./php/8.3/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     working_dir: /workspace
     tty: true
     stdin_open: true
     ports:
-      - "8300-8399:8000-8099"
+      - "8000-8099:8000-8099"
     environment:
       - TZ=America/Porto_Velho
 
@@ -40,10 +42,11 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ../Projetos:/workspace
+      - ./php/8.5/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     working_dir: /workspace
     tty: true
     stdin_open: true
     ports:
-      - "8500-8599:8000-8099"
+      - "8000-8099:8000-8099"
     environment:
       - TZ=America/Porto_Velho

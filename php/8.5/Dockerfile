@@ -57,4 +57,14 @@ RUN composer global require laravel/installer \
 # Configurar Git safe.directory (executado automaticamente ao entrar no container)
 RUN echo 'git config --global --add safe.directory "*" 2>/dev/null || true' >> /root/.bashrc
 
+# Configurar bash colorido
+RUN echo 'export PS1="\[\033[01;32m\]\u@php8.5\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n$ "' >> /root/.bashrc \
+ && echo 'alias ls="ls --color=auto"' >> /root/.bashrc \
+ && echo 'alias grep="grep --color=auto"' >> /root/.bashrc \
+ && echo 'alias ll="ls -lah --color=auto"' >> /root/.bashrc \
+ && echo 'export TERM=xterm-256color' >> /root/.bashrc
+
+# Copiar configurações customizadas do PHP
+COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
+
 WORKDIR /workspace
