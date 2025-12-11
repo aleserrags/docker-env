@@ -55,9 +55,6 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | b
 RUN composer global require laravel/installer \
  && echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> /root/.bashrc
 
-# Configurar Git safe.directory (executado automaticamente ao entrar no container)
-RUN echo 'git config --global --add safe.directory "*" 2>/dev/null || true' >> /root/.bashrc
-
 # Configurar bash colorido
 RUN echo 'export PS1="\[\033[01;32m\]\u@php8.3\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n$ "' >> /root/.bashrc \
  && echo 'alias ls="ls --color=auto"' >> /root/.bashrc \
