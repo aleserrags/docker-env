@@ -68,6 +68,7 @@ RUN echo 'export PS1="\[\033[01;32m\]\u@php8.3\[\033[00m\]:\[\033[01;34m\]\w\[\0
  && echo 'alias ls="ls --color=auto"' >> ~/.bashrc \
  && echo 'alias grep="grep --color=auto"' >> ~/.bashrc \
  && echo 'alias ll="ls -lah --color=auto"' >> ~/.bashrc \
- && echo 'export TERM=xterm-256color' >> ~/.bashrc
+ && echo 'export TERM=xterm-256color' >> ~/.bashrc \
+ && echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> ~/.bashrc
 
 WORKDIR /workspace
