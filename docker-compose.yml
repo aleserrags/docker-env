@@ -1,0 +1,49 @@
+services:
+
+  php82:
+    build: ./php/8.2
+    image: php-dev:8.2
+    container_name: php82
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../Projetos:/workspace
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    ports:
+      - "8200-8299:8000-8099"
+    environment:
+      - TZ=America/Porto_Velho
+
+  php83:
+    build: ./php/8.3
+    image: php-dev:8.3
+    container_name: php83
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../Projetos:/workspace
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    ports:
+      - "8300-8399:8000-8099"
+    environment:
+      - TZ=America/Porto_Velho
+
+  php85:
+    build: ./php/8.5
+    image: php-dev:8.5
+    container_name: php85
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../Projetos:/workspace
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    ports:
+      - "8500-8599:8000-8099"
+    environment:
+      - TZ=America/Porto_Velho
