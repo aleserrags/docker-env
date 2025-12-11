@@ -1,7 +1,8 @@
 FROM php:8.3-cli
 
-ENV NVM_DIR=/root/.nvm
-ENV NODE_VERSION=24.12.0
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+ARG NODE_VERSION=24.12.0
 
 # Dependências do sistema
  RUN apt-get update && apt-get install -y \
@@ -37,32 +38,36 @@ RUN pecl install xdebug && docker-php-ext-enable xdebug
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Instalar NVM + Node
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
- && . $NVM_DIR/nvm.sh \
- && nvm install $NODE_VERSION \
- && nvm use $NODE_VERSION \
- && nvm alias default $NODE_VERSION
-
-# Tornar Node/NPM acessível no PATH (fora do shell de login)
-ENV PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin/:$PATH"
-
 # Symfony CLI
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash \
  && apt install -y symfony-cli
 
-# Laravel Installer
-RUN composer global require laravel/installer \
- && echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> /root/.bashrc
-
-# Configurar bash colorido
-RUN echo 'export PS1="\[\033[01;32m\]\u@php8.3\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n$ "' >> /root/.bashrc \
- && echo 'alias ls="ls --color=auto"' >> /root/.bashrc \
- && echo 'alias grep="grep --color=auto"' >> /root/.bashrc \
- && echo 'alias ll="ls -lah --color=auto"' >> /root/.bashrc \
- && echo 'export TERM=xterm-256color' >> /root/.bashrc
-
 # Copiar configurações customizadas do PHP
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
+
+# Criar usuário com mesmo UID/GID do host
+RUN groupadd -g ${GROUP_ID} devuser && \
+    useradd -u ${USER_ID} -g devuser -m -s /bin/bash devuser
+
+# Trocar para devuser para instalar ferramentas de desenvolvimento
+USER devuser
+
+# Instalar NVM + Node como devuser
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
+ && export NVM_DIR="$HOME/.nvm" \
+ && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+ && nvm install $NODE_VERSION \
+ && nvm use $NODE_VERSION \
+ && nvm alias default $NODE_VERSION
+
+# Laravel Installer para devuser
+RUN composer global require laravel/installer
+
+# Configurar bash colorido para devuser
+RUN echo 'export PS1="\[\033[01;32m\]\u@php8.3\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n$ "' >> ~/.bashrc \
+ && echo 'alias ls="ls --color=auto"' >> ~/.bashrc \
+ && echo 'alias grep="grep --color=auto"' >> ~/.bashrc \
+ && echo 'alias ll="ls -lah --color=auto"' >> ~/.bashrc \
+ && echo 'export TERM=xterm-256color' >> ~/.bashrc
 
 WORKDIR /workspace
