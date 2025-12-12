@@ -50,3 +50,13 @@ services:
       - "8000-8099:8000-8099"
     environment:
       - TZ=America/Porto_Velho
+
+  bd-mariadb:
+    build: ./bd_mariadb
+    container_name: bd-mariadb114
+    ports:
+      - "33062:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=password
+    volumes:
+      - ./bd_mariadb/50-server.cnf:/etc/mysql/mariadb.conf.d/50-server.cnf
