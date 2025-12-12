@@ -7,7 +7,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ../Projetos:/workspace
+      - ../projetos:/workspace
       - ./php/8.2/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     working_dir: /workspace
     tty: true
@@ -24,7 +24,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ../Projetos:/workspace
+      - ../projetos:/workspace
       - ./php/8.3/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     working_dir: /workspace
     tty: true
@@ -41,7 +41,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ../Projetos:/workspace
+      - ../projetos:/workspace
       - ./php/8.5/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     working_dir: /workspace
     tty: true

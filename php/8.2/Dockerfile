@@ -5,16 +5,21 @@ ARG GROUP_ID=1000
 ARG NODE_VERSION=24.12.0
 
 # Dependências do sistema
- RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
       git zip unzip curl wget nano vim \
       libicu-dev libxml2-dev libzip-dev \
       libonig-dev libpng-dev libjpeg-dev libfreetype6-dev \
       libcurl4-openssl-dev libpq-dev libsqlite3-dev \
       libssl-dev pkg-config \
-      libmagickwand-dev --no-install-recommends \
+      libmagickwand-dev imagemagick \
+      poppler-utils \
+      tesseract-ocr \
+      tesseract-ocr-por \
+      ocrmypdf \
+      build-essential autoconf \
  && rm -rf /var/lib/apt/lists/*
 
-# Extensões PHP (curl é built-in desde PHP 8.0)
+# Extensões PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
  && docker-php-ext-install \
       intl \
@@ -29,11 +34,15 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
       xml \
       opcache
 
+# PIE
+RUN curl -L https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
+ && chmod +x /usr/local/bin/pie
+
 # Imagick
-RUN pecl install imagick && docker-php-ext-enable imagick
+RUN pie install imagick/imagick -n
 
 # Xdebug
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN pie install xdebug/xdebug -n
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -45,14 +54,14 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | b
 # Copiar configurações customizadas do PHP
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
 
-# Criar usuário com mesmo UID/GID do host
+# Criar usuário com mesmo ID do host
 RUN groupadd -g ${GROUP_ID} devuser && \
     useradd -u ${USER_ID} -g devuser -m -s /bin/bash devuser
 
 # Trocar para devuser para instalar ferramentas de desenvolvimento
 USER devuser
 
-# Instalar NVM + Node como devuser
+# Instalar NVM + Node
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
  && export NVM_DIR="$HOME/.nvm" \
  && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
@@ -60,10 +69,10 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | b
  && nvm use $NODE_VERSION \
  && nvm alias default $NODE_VERSION
 
-# Laravel Installer para devuser
+# Laravel Installer
 RUN composer global require laravel/installer
 
-# Configurar bash colorido para devuser
+# Configurar bash
 RUN echo 'export PS1="\[\033[01;32m\]\u@php8.2\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n$ "' >> ~/.bashrc \
  && echo 'alias ls="ls --color=auto"' >> ~/.bashrc \
  && echo 'alias grep="grep --color=auto"' >> ~/.bashrc \
