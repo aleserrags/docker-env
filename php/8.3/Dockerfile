@@ -28,7 +28,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
       pdo_sqlite \
       bcmath \
       xml \
-      opcache
+      opcache \
+      ftp
 
 # PIE
 RUN curl -L https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
