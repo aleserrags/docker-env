@@ -1,0 +1,25 @@
+services:
+  devstack:
+    build: ./all-in-one
+    image: php-devstack:latest
+    container_name: php-devstack
+    hostname: php-devstack
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../projetos:/workspace
+      - ./all-in-one/config/php:/opt/devstack/config/php
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    ports:
+      - "8000-8099:8000-8099"
+      - "3306:3306"
+      - "3307:3307"
+      - "5432:5432"
+    environment:
+      - TZ=America/Porto_Velho
+      - MYSQL_ROOT_PASSWORD=password
+      - MARIADB_ROOT_PASSWORD=password
+      - POSTGRES_PASSWORD=password
+    command: ["/bin/bash"]
